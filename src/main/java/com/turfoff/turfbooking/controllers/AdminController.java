@@ -37,7 +37,7 @@ public class AdminController {
         );
     }
 
-    @PutMapping(path = "/")
+    @PostMapping(path = "/")
     public ResponseEntity<AdminDto> createAdmin(@RequestBody AdminDto adminDto) {
         adminDto.setId(UUID.randomUUID());
         adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));

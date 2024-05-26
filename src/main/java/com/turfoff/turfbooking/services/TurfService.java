@@ -1,7 +1,7 @@
 package com.turfoff.turfbooking.services;
 
-import org.springframework.stereotype.Service;
+import com.turfoff.turfbooking.domain.entities.TurfEntity;
 
-@Service
 public interface TurfService {
+    TurfEntity createTurf(TurfEntity turfEntity);
 }

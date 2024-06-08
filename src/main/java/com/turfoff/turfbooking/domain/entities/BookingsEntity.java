@@ -2,24 +2,19 @@ package com.turfoff.turfbooking.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "bookings")
-public class BookingsEntity {
-    @Id
-    @Column(unique = true, nullable = false)
-    private UUID bookingId;
+public class BookingsEntity extends EntityBase{
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", nullable = false)
@@ -34,8 +29,4 @@ public class BookingsEntity {
 
     @Column(nullable = false)
     private LocalDateTime finishTime;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
 }

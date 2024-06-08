@@ -1,11 +1,11 @@
 package com.turfoff.turfbooking.repositories;
 
 import com.turfoff.turfbooking.domain.entities.AdminEntity;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface AdminRepository extends CrudRepository<AdminEntity, UUID> {
+public interface AdminRepository extends JpaRepository<AdminEntity, UUID> {
 }

@@ -3,24 +3,17 @@ package com.turfoff.turfbooking.domain.entities;
 import com.turfoff.turfbooking.utilities.TurfStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "turfs")
-public class TurfEntity {
-    @Id
-    @Column(unique = true)
-    private UUID id;
+public class TurfEntity extends EntityBase{
 
     @Column(nullable = false)
     private String name;
@@ -49,8 +42,4 @@ public class TurfEntity {
 
     @Column(nullable = false)
     private String address;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
 }

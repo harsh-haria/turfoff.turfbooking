@@ -22,11 +22,11 @@ public class TurfEntity extends EntityBase{
     private TurfStatus status;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "owner_id")
     private AdminEntity owner;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(name = "manager_id")
     private AdminEntity manager;
 
     @Column(nullable = false)

@@ -18,11 +18,11 @@ public class BookingsEntity extends EntityBase{
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", nullable = false)
-    private UserEntity userId;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", nullable = false)
-    private TurfEntity turfId;
+    private TurfEntity turf;
 
     @Column(nullable = false)
     private LocalDateTime startTime;

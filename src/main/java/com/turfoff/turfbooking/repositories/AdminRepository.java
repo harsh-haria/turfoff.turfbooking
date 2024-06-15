@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface AdminRepository extends JpaRepository<AdminEntity, UUID> {
+public interface AdminRepository extends JpaRepository<AdminEntity, Long> {
 }

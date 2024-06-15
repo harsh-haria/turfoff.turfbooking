@@ -11,7 +11,7 @@ public class TestDataUtil {
 
     public static AdminEntity createTestAdminA () {
         return AdminEntity.builder()
-                .id(UUID.fromString("e1397d31-a1d3-498f-b809-493940d31c45"))
+                .id(1L)
                 .firstName("Harsh")
                 .lastName("Haria")
                 .email("test@harsh.com")
@@ -22,9 +22,9 @@ public class TestDataUtil {
 
     public static AdminDto createTestAdminDto () {
         return AdminDto.builder()
-                .id(UUID.fromString("e1397d31-a1d3-498f-b809-493940d31c45"))
+                .id(1L)
                 .firstName("HarshDto")
-                .lastName("Haria")
+                .lastName("HariaDto")
                 .email("test@harsh.com")
                 .password("harshharia")
                 .phone("8181800000")

@@ -10,7 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/admin")
@@ -27,7 +26,7 @@ public class AdminController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<AdminDto> getAdmin(@PathVariable UUID id) {
+    public ResponseEntity<AdminDto> getAdmin(@PathVariable Long id) {
         Optional<AdminEntity> adminRecord = adminService.findAdmin(id);
         return adminRecord.map(adminEntity -> {
             AdminDto adminDto = adminMapper.mapTo(adminEntity);
@@ -39,7 +38,6 @@ public class AdminController {
 
     @PostMapping(path = "/")
     public ResponseEntity<AdminDto> createAdmin(@RequestBody AdminDto adminDto) {
-        adminDto.setId(UUID.randomUUID());
         adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
         AdminEntity adminEntity = adminMapper.mapFrom(adminDto);
         AdminEntity savedAdmin = adminService.saveAdmin(adminEntity);

@@ -1,6 +1,5 @@
 package com.turfoff.turfbooking.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turfoff.turfbooking.TestDataUtil;
 import com.turfoff.turfbooking.domain.dto.AdminDto;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -47,7 +45,7 @@ public class AdminControllerIntegrationTests {
     private AdminMapperImpl adminMapperImpl;
 
     @Autowired
-    public void AdminControllerIntegrationTests(AdminService adminService, MockMvc mockMvc) {
+    public AdminControllerIntegrationTests(AdminService adminService, MockMvc mockMvc) {
         this.adminService = adminService;
         this.mockMvc = mockMvc;
         this.passwordEncoder = new BCryptPasswordEncoder();
@@ -60,7 +58,7 @@ public class AdminControllerIntegrationTests {
         String testAdminAJson = objectMapper.writeValueAsString(testAdminDto);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/admin/")
+                MockMvcRequestBuilders.post("/admin/")
                         .header(principalRequestHeader, principalRequestValue)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(testAdminAJson)

@@ -1,21 +1,20 @@
 package com.turfoff.turfbooking.domain.dto;
 
 import com.turfoff.turfbooking.domain.entities.AdminEntity;
+import com.turfoff.turfbooking.domain.entities.EntityBase;
 import com.turfoff.turfbooking.utilities.TurfStatus;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class TurfDto {
-    private UUID id;
+@SuperBuilder
+public class TurfDto extends EntityBase {
     private String name;
     private TurfStatus status;
     private AdminEntity owner;

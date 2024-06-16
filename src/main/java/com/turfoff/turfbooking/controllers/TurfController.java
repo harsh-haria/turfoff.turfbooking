@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/turf")
@@ -28,7 +27,6 @@ public class TurfController {
 
     @PostMapping(path = "/createTurf")
     public ResponseEntity<TurfEntity> createTurf(@RequestBody final TurfDto turfDto) {
-        turfDto.setId(UUID.randomUUID());
         turfDto.setStatus(TurfStatus.INACTIVE);
         turfDto.setCreatedAt(LocalDateTime.now());
         TurfEntity turfEntity = turfMapper.mapFrom(turfDto);

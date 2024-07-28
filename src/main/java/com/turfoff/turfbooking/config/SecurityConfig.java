@@ -1,5 +1,8 @@
 package com.turfoff.turfbooking.config;
 
+import com.turfoff.turfbooking.jwt.AuthEntryPointJwt;
+import com.turfoff.turfbooking.jwt.AuthTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,10 +12,19 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private AuthEntryPointJwt authEntryPointJwt;
+
+    @Bean
+    public AuthTokenFilter authTokenFilter() {
+        return new AuthTokenFilter();
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -30,6 +42,8 @@ public class SecurityConfig {
             authorizeRequests.anyRequest().authenticated();
         });
         http.sessionManagement(sessionManagement ->  sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) );
+        http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
+        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

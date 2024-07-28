@@ -34,23 +34,11 @@ public class SecurityConfig {
         return manager;
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        final ApiKeyAuthFilter filter = new ApiKeyAuthFilter(principalRequestHeader);
-        filter.setAuthenticationManager((Authentication authentication) -> {
-            final String principal = (String) authentication.getPrincipal();
-            if (!principalRequestValue.equals(principal)) {
-                throw new BadCredentialsException("Please provide valid API Key");
-            }
-            authentication.setAuthenticated(true);
-            return authentication;
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests((authorizeRequests) -> {
+            authorizeRequests.anyRequest().authenticated();
         });
-        http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .csrf().disable()
-                .addFilter(filter).authorizeRequests()
-                .anyRequest().authenticated();
+        http.sessionManagement(sessionManagement ->  sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) );
         return http.build();
     }
 

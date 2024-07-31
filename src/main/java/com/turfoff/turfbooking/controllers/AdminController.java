@@ -54,7 +54,7 @@ public class AdminController {
         );
     }
 
-    @PostMapping(path = "/")
+    @PostMapping(path = "/new")
     public ResponseEntity<AdminDto> createAdmin(@RequestBody AdminDto adminDto) {
         adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
         AdminEntity adminEntity = adminMapper.mapFrom(adminDto);

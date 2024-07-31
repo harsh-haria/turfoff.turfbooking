@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,12 +42,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorizeRequests) -> {
-            authorizeRequests.anyRequest().authenticated();
-        });
+        http.authorizeHttpRequests((authorizeRequests) ->
+            authorizeRequests
+                    .requestMatchers("/admin/new").permitAll()
+                    .requestMatchers("/admin/signin").permitAll()
+                    .anyRequest().authenticated()
+        );
         http.sessionManagement(sessionManagement ->  sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) );
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 

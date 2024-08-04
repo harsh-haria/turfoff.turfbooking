@@ -71,12 +71,14 @@ public class AdminController {
     }
 
     @PostMapping(path = "/signin")
-    public ResponseEntity signupAdmin(@RequestBody AdminLoginDto adminLoginDto) {
+    public ResponseEntity signinAdmin(@RequestBody AdminLoginDto adminLoginDto) {
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(adminLoginDto.getUsername(), adminLoginDto.getPassword()));
+            System.out.println(authentication);
         }
         catch (Exception e) {
+            System.out.println(e);
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad Credentials");
             map.put("status", false);

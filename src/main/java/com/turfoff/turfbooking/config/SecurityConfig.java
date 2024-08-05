@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -46,6 +47,17 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Autowired
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authProviderForUser());
+//        auth.authenticationProvider(authProviderForAdmin());
+    }
+
+    @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorizeRequests) ->
             authorizeRequests
@@ -57,6 +69,7 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
         );
         http.authenticationProvider(authProviderForUser());
+//        http.getSharedObject(AuthenticationManagerBuilder.class).authenticationProvider(authProviderForUser());
 //        http.authenticationProvider(authProviderForAdmin());
         http.sessionManagement(sessionManagement ->  sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) );
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
@@ -78,15 +91,4 @@ public class SecurityConfig {
 //        authProvider.setUserDetailsService(userDetailsService());
 //        return authProvider;
 //    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
-        try {
-            return authenticationConfiguration.getAuthenticationManager();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

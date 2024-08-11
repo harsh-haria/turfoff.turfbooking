@@ -75,7 +75,6 @@ public class AdminController {
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(adminLoginDto.getUsername(), adminLoginDto.getPassword()));
-            System.out.println(authentication);
         }
         catch (Exception e) {
             System.out.println(e);
@@ -87,7 +86,7 @@ public class AdminController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String jwtToken = jwtUtils.generateJwtTokenFromUsername(userDetails);
-        List<String> roles =userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("status", HttpStatus.ACCEPTED);
         responseData.put("roles", roles);

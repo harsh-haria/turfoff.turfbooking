@@ -68,9 +68,9 @@ public class SecurityConfig {
                     .requestMatchers("/users/serveralive").permitAll()
                     .anyRequest().authenticated()
         );
-        http.authenticationProvider(authProviderForUser());
 //        http.getSharedObject(AuthenticationManagerBuilder.class).authenticationProvider(authProviderForUser());
-//        http.authenticationProvider(authProviderForAdmin());
+        http.authenticationProvider(authProviderForUser());
+        http.authenticationProvider(authProviderForAdmin());
         http.sessionManagement(sessionManagement ->  sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) );
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -85,10 +85,10 @@ public class SecurityConfig {
         return authProvider;
     }
 
-//    private AuthenticationProvider authProviderForAdmin() {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
-//        authProvider.setUserDetailsService(userDetailsService());
-//        return authProvider;
-//    }
+    private AuthenticationProvider authProviderForAdmin() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
+        authProvider.setUserDetailsService(userDetailsService());
+        return authProvider;
+    }
 }

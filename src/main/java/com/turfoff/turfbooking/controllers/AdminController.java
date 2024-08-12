@@ -74,7 +74,7 @@ public class AdminController {
     public ResponseEntity signinAdmin(@RequestBody AdminLoginDto adminLoginDto) {
         Authentication authentication;
         try {
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(adminLoginDto.getUsername(), adminLoginDto.getPassword()));
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(adminLoginDto.getEmail(), adminLoginDto.getPassword()));
         }
         catch (Exception e) {
             System.out.println(e);

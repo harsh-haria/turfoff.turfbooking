@@ -2,6 +2,7 @@ package com.turfoff.turfbooking.config;
 
 import com.turfoff.turfbooking.jwt.AuthEntryPointJwt;
 import com.turfoff.turfbooking.jwt.AuthTokenFilter;
+import com.turfoff.turfbooking.services.CustomAdminDetailsService;
 import com.turfoff.turfbooking.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,9 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private CustomAdminDetailsService customAdminDetailsService;
+
     @Bean
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
@@ -54,7 +58,7 @@ public class SecurityConfig {
     @Autowired
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authProviderForUser());
-//        auth.authenticationProvider(authProviderForAdmin());
+        auth.authenticationProvider(authProviderForAdmin());
     }
 
     @Bean
@@ -88,7 +92,7 @@ public class SecurityConfig {
     private AuthenticationProvider authProviderForAdmin() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(customAdminDetailsService);
         return authProvider;
     }
 }

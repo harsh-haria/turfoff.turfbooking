@@ -1,7 +1,8 @@
 package com.turfoff.turfbooking.config;
 
+import com.turfoff.turfbooking.jwt.AdminAuthTokenFilter;
 import com.turfoff.turfbooking.jwt.AuthEntryPointJwt;
-import com.turfoff.turfbooking.jwt.AuthTokenFilter;
+import com.turfoff.turfbooking.jwt.UserAuthTokenFilter;
 import com.turfoff.turfbooking.services.CustomAdminDetailsService;
 import com.turfoff.turfbooking.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,13 @@ public class SecurityConfig {
     private CustomAdminDetailsService customAdminDetailsService;
 
     @Bean
-    public AuthTokenFilter authTokenFilter() {
-        return new AuthTokenFilter();
+    public UserAuthTokenFilter authTokenFilter() {
+        return new UserAuthTokenFilter();
+    }
+
+    @Bean
+    public AdminAuthTokenFilter adminAuthTokenFilter(){
+        return new AdminAuthTokenFilter();
     }
 
     @Bean
@@ -78,6 +84,7 @@ public class SecurityConfig {
         http.sessionManagement(sessionManagement ->  sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) );
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(adminAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         http.csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }

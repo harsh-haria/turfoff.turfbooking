@@ -7,6 +7,7 @@ import com.turfoff.turfbooking.services.TurfService;
 import com.turfoff.turfbooking.utilities.TurfStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ public class TurfController {
         this.turfMapper = turfMapper;
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
     @PostMapping(path = "/createTurf")
     public ResponseEntity<TurfEntity> createTurf(@RequestBody final TurfDto turfDto) {
         turfDto.setStatus(TurfStatus.INACTIVE);

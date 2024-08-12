@@ -1,6 +1,6 @@
 package com.turfoff.turfbooking.jwt;
 
-import com.turfoff.turfbooking.services.CustomUserDetailsService;
+import com.turfoff.turfbooking.services.CustomAdminDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,13 +16,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class AuthTokenFilter extends OncePerRequestFilter {
+public class AdminAuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtils jwtUtils;
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private CustomAdminDetailsService adminDetailsService;
 
     private String parseJwt(HttpServletRequest request) {
         return jwtUtils.getJwtFromHeader(request);
@@ -33,8 +33,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUsernameFromJwtToken(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                String email = jwtUtils.getUsernameFromJwtToken(jwt);
+                UserDetails userDetails = adminDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

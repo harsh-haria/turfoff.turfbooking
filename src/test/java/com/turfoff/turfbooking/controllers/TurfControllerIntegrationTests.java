@@ -6,6 +6,7 @@ import com.turfoff.turfbooking.domain.entities.AdminEntity;
 import com.turfoff.turfbooking.domain.entities.TurfEntity;
 import com.turfoff.turfbooking.jwt.JwtUtils;
 import com.turfoff.turfbooking.repositories.AdminRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +44,17 @@ public class TurfControllerIntegrationTests {
         AdminEntity savedAdminEntity = adminRepository.save(admin);
 
         final String TOKEN = jwtUtils.generateJwtTokenFromUsernameWithUsernameString(savedAdminEntity.getEmail());
-
+        final String bearerToken = "Bearer " + TOKEN;
+        if (TOKEN == null || TOKEN.trim().isEmpty()) {
+            Assertions.fail("Token generation returned null while creating turf");
+        }
 
         TurfEntity turf = TestDataUtil.createTestTurfEntity(savedAdminEntity.getId());
         String inputBody = objectMapper.writeValueAsString(turf);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/turf/createTurf")
-                        .header("Authorization", "Bearer" + TOKEN)
+                        .header("Authorization", bearerToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputBody)
         ).andExpect(

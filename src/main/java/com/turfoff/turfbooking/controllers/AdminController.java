@@ -9,6 +9,7 @@ import com.turfoff.turfbooking.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,6 +44,7 @@ public class AdminController {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
     @GetMapping(path = "/{id}")
     public ResponseEntity<AdminDto> getAdmin(@PathVariable Long id) {
         Optional<AdminEntity> adminRecord = adminService.findAdmin(id);
@@ -62,11 +64,18 @@ public class AdminController {
         return new ResponseEntity<>(adminMapper.mapTo(savedAdmin), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
     @PatchMapping(path = "/updatePassword")
     public ResponseEntity changeAdminPassword(@RequestBody AdminDto adminDto) {
         adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
-        AdminEntity adminEntity = adminMapper.mapFrom(adminDto);
-        adminService.saveAdmin(adminEntity);
+        adminService.updatePassword(adminDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
+    @PatchMapping(path = "/updatePhoneNumber")
+    public ResponseEntity changeAdminPhoneNumber(@RequestBody AdminDto adminDto) {
+        adminService.updatePhoneNumber(adminDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

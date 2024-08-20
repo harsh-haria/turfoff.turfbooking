@@ -1,11 +1,11 @@
 package com.turfoff.turfbooking.services;
 
+import com.turfoff.turfbooking.domain.dto.AdminDto;
 import com.turfoff.turfbooking.domain.entities.AdminEntity;
 import com.turfoff.turfbooking.repositories.AdminRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -24,5 +24,15 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public AdminEntity saveAdmin(AdminEntity adminEntity) {
         return adminRepository.save(adminEntity);
+    }
+
+    @Override
+    public void updatePassword(AdminDto adminDto) {
+        adminRepository.updatePassword(adminDto.getId(), adminDto.getPassword());
+    }
+
+    @Override
+    public void updatePhoneNumber(AdminDto adminDto) {
+        adminRepository.updatePhoneNumber(adminDto.getId(), adminDto.getPhone());
     }
 }

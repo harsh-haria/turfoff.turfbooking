@@ -17,4 +17,9 @@ public class TurfServiceImpl implements TurfService {
     public TurfEntity createTurf(TurfEntity turfEntity) {
         return turfRepository.save(turfEntity);
     }
+
+    @Override
+    public TurfEntity getTurf(Long turfId) {
+        return turfRepository.getReferenceById(turfId);
+    }
 }

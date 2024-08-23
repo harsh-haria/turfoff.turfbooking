@@ -1,5 +1,6 @@
 package com.turfoff.turfbooking.controllers;
 
+import com.turfoff.turfbooking.domain.dto.UserDto;
 import com.turfoff.turfbooking.domain.dto.UserLoggedInDto;
 import com.turfoff.turfbooking.domain.dto.UserLoginDto;
 import com.turfoff.turfbooking.domain.entities.UserEntity;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,11 +54,18 @@ public class UserController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity addNewUser(@RequestBody UserEntity userDto) {
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userDto.setRefferalCode(RandomStringUtils.randomAlphanumeric(6).toUpperCase());
-//        UserEntity userEntity = userMapper.mapFrom(userDto);
-        UserEntity savedUser = userService.saveUser(userDto);
+    public ResponseEntity addNewUser(@RequestBody UserDto userDto) {
+        UserEntity savedUser = null;
+        try {
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            userDto.setRefferalCode(RandomStringUtils.randomAlphanumeric(6).toUpperCase());
+            UserEntity userEntity = userMapper.mapFrom(userDto);
+            userEntity.setCreatedAt(LocalDateTime.now());
+            savedUser = userService.saveUser(userEntity);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("message", "New user created");
         map.put("status", 200);
@@ -69,8 +78,7 @@ public class UserController {
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword()));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             Map<String, Object> map = new HashMap<>();
             map.put("message", e.getMessage());
             map.put("status", 400);

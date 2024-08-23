@@ -3,6 +3,7 @@ package com.turfoff.turfbooking;
 import com.turfoff.turfbooking.domain.dto.AdminDto;
 import com.turfoff.turfbooking.domain.entities.AdminEntity;
 import com.turfoff.turfbooking.domain.entities.TurfEntity;
+import com.turfoff.turfbooking.domain.entities.UserEntity;
 import com.turfoff.turfbooking.utilities.TurfStatus;
 
 public class TestDataUtil {
@@ -46,6 +47,18 @@ public class TestDataUtil {
                 .phone("12345 67890")
                 .email("turf1@turfoff.com")
                 .address("Mumbai, In")
+                .build();
+    }
+
+    public static UserEntity createTestUserEntity() {
+        return UserEntity.builder()
+                .username("test")
+                .password("test")
+                .fname("Ellaire")
+                .lname("Dawson")
+                .email("test@gmail.com")
+                .phone("1234512345")
+                .refferalCode("ABCDEF")
                 .build();
     }
 

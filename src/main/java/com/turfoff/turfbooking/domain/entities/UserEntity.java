@@ -22,9 +22,9 @@ public class UserEntity extends EntityBase{
     @Column(nullable = false)
     private String password;
 
-    private String firstName;
+    private String fname;
 
-    private String lastName;
+    private String lname;
 
     @Column(unique = true, nullable = false)
     private String email;

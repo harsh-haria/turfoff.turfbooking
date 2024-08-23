@@ -9,6 +9,7 @@ import com.turfoff.turfbooking.mappers.impl.UserMapperImpl;
 import com.turfoff.turfbooking.services.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,23 +55,29 @@ public class UserController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity addNewUser(@RequestBody UserDto userDto) {
-        UserEntity savedUser = null;
+    public ResponseEntity<Map<String, Object>> addNewUser(@RequestBody UserDto userDto) {
+        Map<String, Object> response = new HashMap<>();
         try {
             userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
             userDto.setRefferalCode(RandomStringUtils.randomAlphanumeric(6).toUpperCase());
             UserEntity userEntity = userMapper.mapFrom(userDto);
             userEntity.setCreatedAt(LocalDateTime.now());
-            savedUser = userService.saveUser(userEntity);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            userService.saveUser(userEntity);
+            response.put("message", "New user created");
+            response.put("status", 201);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", "New user created");
-        map.put("status", 200);
-        map.put("user", savedUser);
-        return new ResponseEntity<>(map, HttpStatus.CREATED);
+        catch (DataIntegrityViolationException e) {
+            response.put("message", "Phone number or email is already taken.");
+            response.put("status", 400);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            response.put("message", "An error occured while registering you");
+            response.put("status", 500);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/signin")

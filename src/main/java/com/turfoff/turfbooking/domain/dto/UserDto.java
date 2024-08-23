@@ -12,8 +12,8 @@ import lombok.experimental.SuperBuilder;
 public class UserDto {
     private String username;
     private String password;
-    private String firstName;
-    private String lastName;
+    private String fname;
+    private String lname;
     private String email;
     private String phone;
     private int points;

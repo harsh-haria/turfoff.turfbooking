@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -66,18 +68,26 @@ public class UserController {
             response.put("message", "New user created");
             response.put("status", 201);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
-        catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             response.put("message", "Phone number or email is already taken.");
             response.put("status", 400);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             response.put("message", "An error occured while registering you");
             response.put("status", 500);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUser(@PathVariable long userId) throws Exception {
+        Optional<UserEntity> userById = userService.getUserById(userId);
+        return userById.map(userEntity -> {
+            UserDto userDto = userMapper.mapTo(userEntity);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/signin")
@@ -95,9 +105,7 @@ public class UserController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
         String authToken = jwtUtils.generateJwtTokenFromUsername(userDetails);
-        List<String> roles = userDetails.getAuthorities()
-                .stream().map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
         UserLoggedInDto userLoggedInDto = new UserLoggedInDto(username, authToken, roles);
         return new ResponseEntity<>(userLoggedInDto, HttpStatus.OK);
     }

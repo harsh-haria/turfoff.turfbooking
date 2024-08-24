@@ -4,6 +4,8 @@ import com.turfoff.turfbooking.domain.entities.UserEntity;
 import com.turfoff.turfbooking.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -18,6 +20,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserEntity saveUser(UserEntity user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public Optional<UserEntity> getUserById(long id) {
+        return Optional.of(userRepository.getById(id));
     }
 
 //    @Override

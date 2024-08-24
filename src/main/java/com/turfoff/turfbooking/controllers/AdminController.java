@@ -50,7 +50,7 @@ public class AdminController {
         Optional<AdminEntity> adminRecord = adminService.findAdmin(id);
         return adminRecord.map(adminEntity -> {
             AdminDto adminDto = adminMapper.mapTo(adminEntity);
-            return new ResponseEntity<>(adminDto, HttpStatus.CREATED);
+            return new ResponseEntity<>(adminDto, HttpStatus.OK);
         }).orElse(
                 new ResponseEntity<>(HttpStatus.NOT_FOUND)
         );

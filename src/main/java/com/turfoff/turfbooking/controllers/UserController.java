@@ -48,14 +48,6 @@ public class UserController {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    @GetMapping("/serveralive")
-    public ResponseEntity isUserAlive() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", "Server is alive");
-        map.put("status", 200);
-        return new ResponseEntity<>(map, HttpStatus.OK);
-    }
-
     @PostMapping("/new")
     public ResponseEntity<Map<String, Object>> addNewUser(@RequestBody UserDto userDto) {
         Map<String, Object> response = new HashMap<>();
@@ -109,13 +101,4 @@ public class UserController {
         UserLoggedInDto userLoggedInDto = new UserLoggedInDto(username, authToken, roles);
         return new ResponseEntity<>(userLoggedInDto, HttpStatus.OK);
     }
-
-    @GetMapping("/authCheck")
-    public ResponseEntity isUserAuthenticated() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", "User is authenticated");
-        map.put("status", 200);
-        return new ResponseEntity<>(map, HttpStatus.OK);
-    }
-
 }

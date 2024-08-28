@@ -27,9 +27,18 @@ public class UserServiceImpl implements UserService{
         return Optional.of(userRepository.getById(id));
     }
 
-//    @Override
-//    public Optional<UserEntity> findByUsername(String username) {
-//        return Optional.empty();
-//    }
+    @Override
+    public void updatePassword(String username, String newPassword) {
+        userRepository.updatePassword(username, newPassword);
+    }
 
+    @Override
+    public void updateEmail(String username, String newEmail) {
+        userRepository.updateEmail(username, newEmail);
+    }
+
+    @Override
+    public void updatePhone(String username, String newPhone) {
+        userRepository.updatePhone(username, newPhone);
+    }
 }

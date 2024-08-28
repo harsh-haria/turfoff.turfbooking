@@ -74,7 +74,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable long userId) throws Exception {
+    public ResponseEntity<UserDto> getUser(@PathVariable long userId) {
         Optional<UserEntity> userById = userService.getUserById(userId);
         return userById.map(userEntity -> {
             UserDto userDto = userMapper.mapTo(userEntity);
@@ -100,5 +100,30 @@ public class UserController {
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
         UserLoggedInDto userLoggedInDto = new UserLoggedInDto(username, authToken, roles);
         return new ResponseEntity<>(userLoggedInDto, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_USER')")
+    @PatchMapping("/updatePassword/{username}")
+    public ResponseEntity changeUserPassword(@PathVariable String username, @RequestBody UserDto userDto) {
+        String receivedPassword = userDto.getPassword();
+        String newPassword = passwordEncoder.encode(receivedPassword);
+        userService.updatePassword(username, newPassword);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_USER')")
+    @PatchMapping("/updateEmail/{username}")
+    public ResponseEntity changeUserEmail(@PathVariable String username, @RequestBody UserDto userDto) {
+        String receivedEmail = userDto.getEmail();
+        userService.updateEmail(username, receivedEmail);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_USER')")
+    @PatchMapping("/updatePhone/{username}")
+    public ResponseEntity changeUserPhone(@PathVariable String username, @RequestBody UserDto userDto) {
+        String receivedPhone = userDto.getPhone();
+        userService.updatePhone(username, receivedPhone);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

@@ -9,4 +9,5 @@ public interface UserService {
     Optional<UserEntity> getUserById(long id);
     void updatePassword(String username, String newPassword);
     void updateEmail(String username, String newEmail);
+    void updatePhone(String username, String newPhone);
 }

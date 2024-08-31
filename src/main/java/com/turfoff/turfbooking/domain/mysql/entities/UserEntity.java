@@ -1,4 +1,4 @@
-package com.turfoff.turfbooking.domain.entities;
+package com.turfoff.turfbooking.domain.mysql.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

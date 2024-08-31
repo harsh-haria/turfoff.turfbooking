@@ -2,7 +2,7 @@ package com.turfoff.turfbooking.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turfoff.turfbooking.TestDataUtil;
-import com.turfoff.turfbooking.domain.entities.UserEntity;
+import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

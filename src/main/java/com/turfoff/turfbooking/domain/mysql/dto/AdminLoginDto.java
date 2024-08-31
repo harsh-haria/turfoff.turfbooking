@@ -1,4 +1,4 @@
-package com.turfoff.turfbooking.domain.dto;
+package com.turfoff.turfbooking.domain.mysql.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.turfoff.turfbooking.services;
 
-import com.turfoff.turfbooking.domain.entities.UserEntity;
+import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
 
 import java.util.Optional;
 

@@ -1,7 +1,8 @@
 package com.turfoff.turfbooking.repositories;
 
 import com.turfoff.turfbooking.TestDataUtil;
-import com.turfoff.turfbooking.domain.entities.UserEntity;
+import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
+import com.turfoff.turfbooking.repositories.mysql.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,6 +1,6 @@
-package com.turfoff.turfbooking.repositories;
+package com.turfoff.turfbooking.repositories.mysql;
 
-import com.turfoff.turfbooking.domain.entities.AdminEntity;
+import com.turfoff.turfbooking.domain.mysql.entities.AdminEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

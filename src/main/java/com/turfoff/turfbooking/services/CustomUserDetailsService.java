@@ -1,7 +1,7 @@
 package com.turfoff.turfbooking.services;
 
-import com.turfoff.turfbooking.domain.entities.UserEntity;
-import com.turfoff.turfbooking.repositories.UserRepository;
+import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
+import com.turfoff.turfbooking.repositories.mysql.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

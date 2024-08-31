@@ -1,7 +1,7 @@
 package com.turfoff.turfbooking.mappers.impl;
 
-import com.turfoff.turfbooking.domain.dto.UserDto;
-import com.turfoff.turfbooking.domain.entities.UserEntity;
+import com.turfoff.turfbooking.domain.mysql.dto.UserDto;
+import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
 import com.turfoff.turfbooking.mappers.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

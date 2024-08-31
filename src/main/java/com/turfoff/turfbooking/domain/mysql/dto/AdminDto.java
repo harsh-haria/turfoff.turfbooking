@@ -1,6 +1,6 @@
-package com.turfoff.turfbooking.domain.dto;
+package com.turfoff.turfbooking.domain.mysql.dto;
 
-import com.turfoff.turfbooking.domain.entities.EntityBase;
+import com.turfoff.turfbooking.domain.mysql.entities.EntityBase;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

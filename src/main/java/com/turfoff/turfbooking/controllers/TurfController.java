@@ -1,7 +1,7 @@
 package com.turfoff.turfbooking.controllers;
 
-import com.turfoff.turfbooking.domain.dto.TurfDto;
-import com.turfoff.turfbooking.domain.entities.TurfEntity;
+import com.turfoff.turfbooking.domain.mongo.dto.TurfDto;
+import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import com.turfoff.turfbooking.mappers.impl.TurfMapperImpl;
 import com.turfoff.turfbooking.services.TurfService;
 import com.turfoff.turfbooking.utilities.TurfStatus;

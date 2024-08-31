@@ -1,5 +1,6 @@
-package com.turfoff.turfbooking.domain.entities;
+package com.turfoff.turfbooking.domain.mysql.entities;
 
+import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

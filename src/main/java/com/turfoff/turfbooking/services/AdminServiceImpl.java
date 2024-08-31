@@ -1,8 +1,8 @@
 package com.turfoff.turfbooking.services;
 
-import com.turfoff.turfbooking.domain.dto.AdminDto;
-import com.turfoff.turfbooking.domain.entities.AdminEntity;
-import com.turfoff.turfbooking.repositories.AdminRepository;
+import com.turfoff.turfbooking.domain.mysql.dto.AdminDto;
+import com.turfoff.turfbooking.domain.mysql.entities.AdminEntity;
+import com.turfoff.turfbooking.repositories.mysql.AdminRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

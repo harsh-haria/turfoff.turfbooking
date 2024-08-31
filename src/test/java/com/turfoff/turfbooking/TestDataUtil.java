@@ -1,9 +1,9 @@
 package com.turfoff.turfbooking;
 
-import com.turfoff.turfbooking.domain.dto.AdminDto;
-import com.turfoff.turfbooking.domain.entities.AdminEntity;
-import com.turfoff.turfbooking.domain.entities.TurfEntity;
-import com.turfoff.turfbooking.domain.entities.UserEntity;
+import com.turfoff.turfbooking.domain.mysql.dto.AdminDto;
+import com.turfoff.turfbooking.domain.mysql.entities.AdminEntity;
+import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
+import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
 import com.turfoff.turfbooking.utilities.TurfStatus;
 
 public class TestDataUtil {

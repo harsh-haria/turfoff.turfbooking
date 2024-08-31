@@ -1,9 +1,9 @@
 package com.turfoff.turfbooking.controllers;
 
-import com.turfoff.turfbooking.domain.dto.UserDto;
-import com.turfoff.turfbooking.domain.dto.UserLoggedInDto;
-import com.turfoff.turfbooking.domain.dto.UserLoginDto;
-import com.turfoff.turfbooking.domain.entities.UserEntity;
+import com.turfoff.turfbooking.domain.mysql.dto.UserDto;
+import com.turfoff.turfbooking.domain.mysql.dto.UserLoggedInDto;
+import com.turfoff.turfbooking.domain.mysql.dto.UserLoginDto;
+import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
 import com.turfoff.turfbooking.jwt.JwtUtils;
 import com.turfoff.turfbooking.mappers.impl.UserMapperImpl;
 import com.turfoff.turfbooking.services.UserService;

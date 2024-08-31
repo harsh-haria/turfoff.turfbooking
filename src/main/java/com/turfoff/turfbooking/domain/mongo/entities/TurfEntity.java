@@ -1,5 +1,7 @@
-package com.turfoff.turfbooking.domain.entities;
+package com.turfoff.turfbooking.domain.mongo.entities;
 
+import com.turfoff.turfbooking.domain.mysql.entities.AdminEntity;
+import com.turfoff.turfbooking.domain.mysql.entities.EntityBase;
 import com.turfoff.turfbooking.utilities.TurfStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

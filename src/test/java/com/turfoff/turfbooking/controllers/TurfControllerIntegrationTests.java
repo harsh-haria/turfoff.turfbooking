@@ -2,10 +2,10 @@ package com.turfoff.turfbooking.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turfoff.turfbooking.TestDataUtil;
-import com.turfoff.turfbooking.domain.entities.AdminEntity;
-import com.turfoff.turfbooking.domain.entities.TurfEntity;
+import com.turfoff.turfbooking.domain.mysql.entities.AdminEntity;
+import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import com.turfoff.turfbooking.jwt.JwtUtils;
-import com.turfoff.turfbooking.repositories.AdminRepository;
+import com.turfoff.turfbooking.repositories.mysql.AdminRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

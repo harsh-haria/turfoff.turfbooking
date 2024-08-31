@@ -1,7 +1,7 @@
 package com.turfoff.turfbooking.services;
 
-import com.turfoff.turfbooking.domain.entities.TurfEntity;
-import com.turfoff.turfbooking.repositories.TurfRepository;
+import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
+import com.turfoff.turfbooking.repositories.mongo.TurfRepository;
 import org.springframework.stereotype.Service;
 
 @Service

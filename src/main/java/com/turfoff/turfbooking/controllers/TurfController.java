@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/turfs")
@@ -37,19 +38,22 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
     @GetMapping(path = "/{id}")
-    public ResponseEntity getTurfById(@PathVariable final Long id) {
-        TurfEntity turfEntity = turfService.getTurf(id);
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", "Successfully fetched turf with id " + id);
-        map.put("data", turfMapper.mapTo(turfEntity));
-        return new ResponseEntity<>(map, HttpStatus.OK);
+    public ResponseEntity getTurfById(@PathVariable final String id) {
+        Optional<TurfEntity> turfEntity = turfService.getTurf(id);
+        if (turfEntity.isPresent()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", "Successfully fetched turf with id " + id);
+            map.put("data", turfMapper.mapTo(turfEntity.get()));
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
     @PutMapping(path = "/{id}")
-    public ResponseEntity<TurfEntity> updateTurf(@PathVariable Long id, @RequestBody final TurfDto turfDto) {
+    public ResponseEntity<TurfEntity> updateTurf(@PathVariable String id, @RequestBody final TurfDto turfDto) {
         turfDto.setId(id);
-        turfDto.setLastModifiedAt(LocalDateTime.now());
+//        turfDto.setLastModifiedAt(LocalDateTime.now());
         TurfEntity turfEntity = turfMapper.mapFrom(turfDto);
         TurfEntity createdTurfEntity = turfService.createTurf(turfEntity);
         return new ResponseEntity<>(createdTurfEntity, HttpStatus.ACCEPTED);

@@ -8,40 +8,33 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@Entity
-@Table(name = "turfs")
-public class TurfEntity extends EntityBase{
+@Document(collection = "turfs")
+public class TurfEntity {
 
-    @Column(nullable = false)
+    @Id
+    private String id;
+
     private String name;
 
-    @Column(nullable = false)
     private TurfStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private AdminEntity owner;
+    private long owner;
 
-    @ManyToOne
-    @JoinColumn(name = "manager_id")
-    private AdminEntity manager;
+    private long manager;
 
-    @Column(nullable = false)
     private int rent;
 
     private String amenities;
 
-    @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String address;
 }

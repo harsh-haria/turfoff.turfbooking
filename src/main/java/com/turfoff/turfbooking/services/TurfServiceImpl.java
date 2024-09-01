@@ -4,6 +4,8 @@ import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import com.turfoff.turfbooking.repositories.mongo.TurfRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TurfServiceImpl implements TurfService {
 
@@ -19,7 +21,7 @@ public class TurfServiceImpl implements TurfService {
     }
 
     @Override
-    public TurfEntity getTurf(Long turfId) {
-        return turfRepository.getReferenceById(turfId);
+    public Optional<TurfEntity> getTurf(String turfId) {
+        return turfRepository.findById(turfId);
     }
 }

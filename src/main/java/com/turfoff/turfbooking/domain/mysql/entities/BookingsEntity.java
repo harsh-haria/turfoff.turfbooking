@@ -21,9 +21,7 @@ public class BookingsEntity extends EntityBase{
     @JoinColumn(referencedColumnName = "id", nullable = false)
     private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id", nullable = false)
-    private TurfEntity turf;
+    private String turf;
 
     @Column(nullable = false)
     private LocalDateTime startTime;

@@ -14,11 +14,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class TurfDto extends EntityBase {
+public class TurfDto {
+    private String id;
     private String name;
     private TurfStatus status;
-    private AdminEntity owner;
-    private AdminEntity manager;
+    private long owner;
+    private long manager;
     private int rent;
     private String amenities;
     private String phone;

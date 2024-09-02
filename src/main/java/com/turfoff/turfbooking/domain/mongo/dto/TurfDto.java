@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.time.LocalDateTime;
 
@@ -26,4 +27,5 @@ public class TurfDto {
     private String email;
     private String address;
     private LocalDateTime createdAt;
+    private GeoJsonPoint coordinates;
 }

@@ -1,13 +1,10 @@
 package com.turfoff.turfbooking.domain.mysql.entities;
 
-import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,17 +12,24 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @Entity
 @Table(name = "bookings")
-public class BookingsEntity extends EntityBase{
+public class BookingsEntity extends EntityBase {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", nullable = false)
     private UserEntity user;
 
+    @Column(nullable = false)
     private String turf;
 
-    @Column(nullable = false)
-    private LocalDateTime startTime;
+    private String status;
 
-    @Column(nullable = false)
-    private LocalDateTime finishTime;
+    private float amount;
+
+    private String coupon;
+
+    private float discount;
+
+    private String transactionType;
+
+    private String generatedTransactionId;
 }

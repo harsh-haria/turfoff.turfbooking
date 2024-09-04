@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Entity
 @Table(name = "users")
-public class UserEntity extends EntityBase{
+public class UserEntity extends EntityBase {
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -37,5 +37,5 @@ public class UserEntity extends EntityBase{
     private String refUsed;
 
     @Column(unique = true, nullable = false)
-    private String refferalCode;
+    private String referralCode;
 }

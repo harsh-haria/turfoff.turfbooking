@@ -1,24 +1,28 @@
-package com.turfoff.turfbooking.domain.mysql.entities;
+package com.turfoff.turfbooking.domain.mongo.entities;
 
+import com.turfoff.turfbooking.domain.mysql.entities.EntityBase;
+import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "bookings")
-public class BookingsEntity extends EntityBase {
+@Document(collection = "bookings")
+public class BookingsEntity {
+    @Id
+    private String id;
 
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id", nullable = false)
-    private UserEntity user;
+    private String user;
 
-    @Column(nullable = false)
     private String turf;
 
     private String status;
@@ -28,6 +32,8 @@ public class BookingsEntity extends EntityBase {
     private String coupon;
 
     private float discount;
+
+    private LocalDateTime bookingDateTime;
 
     private String transactionType;
 

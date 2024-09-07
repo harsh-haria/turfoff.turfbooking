@@ -43,4 +43,10 @@ public class TurfEntity {
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private GeoJsonPoint coordinates;
+
+    private int slotDuration;
+
+    private int startHour;
+
+    private int endHour;
 }

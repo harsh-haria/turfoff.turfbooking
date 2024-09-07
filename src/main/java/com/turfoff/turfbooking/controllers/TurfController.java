@@ -1,6 +1,8 @@
 package com.turfoff.turfbooking.controllers;
 
 import com.turfoff.turfbooking.domain.mongo.dto.TurfDto;
+import com.turfoff.turfbooking.domain.mongo.entities.BookingSessionEntity;
+import com.turfoff.turfbooking.domain.mongo.entities.TimeSlot;
 import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import com.turfoff.turfbooking.mappers.impl.TurfMapperImpl;
 import com.turfoff.turfbooking.services.TurfService;
@@ -9,16 +11,13 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/turfs")
@@ -29,6 +28,35 @@ public class TurfController {
     public TurfController(TurfService turfService, TurfMapperImpl turfMapper) {
         this.turfService = turfService;
         this.turfMapper = turfMapper;
+    }
+
+    List<TimeSlot> generateTimeSlots(LocalTime openingTime, LocalTime closingTime, int slotDuration) {
+        List<TimeSlot> timeSlots = new ArrayList<>();
+
+        LocalTime slotStartTime = openingTime;
+
+        while (slotStartTime.isBefore(closingTime)) {
+            LocalTime slotEndTime = slotStartTime.plusMinutes(slotDuration);
+            timeSlots.add(new TimeSlot(slotStartTime, slotEndTime, false)); // false means 'not booked'
+            slotStartTime = slotEndTime;
+        }
+
+        return timeSlots;
+    }
+
+    boolean isOverlapping(LocalTime slotStart, LocalTime slotEnd, LocalTime bookingStart, LocalTime bookingEnd) {
+        return (slotStart.isBefore(bookingEnd) && slotEnd.isAfter(bookingStart));
+    }
+
+    void markBookedSlots(List<TimeSlot> slots, List<BookingSessionEntity> bookings) {
+        for (BookingSessionEntity booking : bookings) {
+            for (TimeSlot slot : slots) {
+                // Check if the slot overlaps with a booking
+                if (isOverlapping(slot.getStartTime(), slot.getEndTime(), booking.getStartTime(), booking.getStartTime().plusMinutes(booking.getDuration()))) {
+                    slot.setStatus(true); // Mark as booked
+                }
+            }
+        }
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
@@ -75,5 +103,32 @@ public class TurfController {
         Distance distance = new Distance(radius, Metrics.KILOMETERS);
         List<TurfEntity> turfList = turfService.getNearByTurfs(point, distance);
         return new ResponseEntity<>(turfList, HttpStatus.OK);
+    }
+
+    @GetMapping("/getSlots")
+    public ResponseEntity getTurfSlots (@RequestParam String id) {
+        Optional<TurfEntity> turf = turfService.getTurf(id);
+        if (turf.isPresent()) {
+            TurfEntity turfEntity = turf.get();
+            // get the slots duration
+            int slotDuration = turfEntity.getSlotDuration();
+            int startHour = turfEntity.getStartHour();
+            int endHour = turfEntity.getEndHour();
+
+            // Generate slots for the day
+            List<TimeSlot> timeSlots = generateTimeSlots(
+                    LocalTime.of(startHour, 0), LocalTime.of(endHour, 59), slotDuration
+            );
+
+            // Fetch existing bookings for the venue on the selected date
+            List<BookingSessionEntity> bookings = turfService.getBookedSlots(id);
+
+            // Mark booked slots
+            markBookedSlots(timeSlots, bookings);
+
+            // Return the slots
+            return new ResponseEntity<>(timeSlots, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

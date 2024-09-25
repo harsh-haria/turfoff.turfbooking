@@ -1,20 +1,23 @@
 package com.turfoff.turfbooking.domain.mysql.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 @Entity
 @Table(name = "users")
-public class UserEntity extends EntityBase {
+public class UserEntity {
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -22,9 +25,9 @@ public class UserEntity extends EntityBase {
     @Column(nullable = false)
     private String password;
 
-    private String fname;
+    private String firstname;
 
-    private String lname;
+    private String lastname;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -36,6 +39,14 @@ public class UserEntity extends EntityBase {
 
     private String refUsed;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String referralCode;
+
+    @Column(nullable = false)
+    private int role;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime lastModifiedAt;
+
 }

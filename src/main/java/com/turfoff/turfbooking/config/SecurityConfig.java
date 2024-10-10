@@ -1,9 +1,7 @@
 package com.turfoff.turfbooking.config;
 
-import com.turfoff.turfbooking.jwt.AdminAuthTokenFilter;
 import com.turfoff.turfbooking.jwt.AuthEntryPointJwt;
 import com.turfoff.turfbooking.jwt.UserAuthTokenFilter;
-import com.turfoff.turfbooking.services.CustomAdminDetailsService;
 import com.turfoff.turfbooking.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -38,17 +36,9 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private CustomAdminDetailsService customAdminDetailsService;
-
     @Bean
     public UserAuthTokenFilter authTokenFilter() {
         return new UserAuthTokenFilter();
-    }
-
-    @Bean
-    public AdminAuthTokenFilter adminAuthTokenFilter(){
-        return new AdminAuthTokenFilter();
     }
 
     @Bean
@@ -64,15 +54,12 @@ public class SecurityConfig {
     @Autowired
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authProviderForUser());
-        auth.authenticationProvider(authProviderForAdmin());
     }
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorizeRequests) ->
             authorizeRequests
-                    .requestMatchers("/admin/new").permitAll()
-                    .requestMatchers("/admin/signin").permitAll()
                     .requestMatchers("/users/new").permitAll()
                     .requestMatchers("/users/signin").permitAll()
                     .requestMatchers("/users/serveralive").permitAll()
@@ -80,11 +67,9 @@ public class SecurityConfig {
         );
 //        http.getSharedObject(AuthenticationManagerBuilder.class).authenticationProvider(authProviderForUser());
         http.authenticationProvider(authProviderForUser());
-        http.authenticationProvider(authProviderForAdmin());
         http.sessionManagement(sessionManagement ->  sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) );
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(adminAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         http.csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
@@ -93,13 +78,6 @@ public class SecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
         authProvider.setUserDetailsService(customUserDetailsService);
-        return authProvider;
-    }
-
-    private AuthenticationProvider authProviderForAdmin() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
-        authProvider.setUserDetailsService(customAdminDetailsService);
         return authProvider;
     }
 }

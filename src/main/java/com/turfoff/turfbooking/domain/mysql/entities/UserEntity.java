@@ -36,6 +36,5 @@ public class UserEntity extends EntityBase {
 
     private String refUsed;
 
-    @Column(unique = true, nullable = false)
     private String referralCode;
 }

@@ -2,10 +2,13 @@ package com.turfoff.turfbooking.controllers;
 
 import com.turfoff.turfbooking.domain.mongo.dto.TurfDto;
 import com.turfoff.turfbooking.domain.mongo.entities.BookingSessionEntity;
+import com.turfoff.turfbooking.domain.mongo.entities.SlotsEntity;
 import com.turfoff.turfbooking.domain.mongo.entities.TimeSlot;
 import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import com.turfoff.turfbooking.mappers.impl.TurfMapperImpl;
+import com.turfoff.turfbooking.services.SlotsService;
 import com.turfoff.turfbooking.services.TurfService;
+import com.turfoff.turfbooking.utilities.SlotStatus;
 import com.turfoff.turfbooking.utilities.TurfStatus;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -24,6 +28,7 @@ import java.util.*;
 public class TurfController {
     private TurfMapperImpl turfMapper;
     private TurfService turfService;
+    private SlotsService slotsService;
 
     public TurfController(TurfService turfService, TurfMapperImpl turfMapper) {
         this.turfService = turfService;
@@ -57,6 +62,29 @@ public class TurfController {
                 }
             }
         }
+    }
+
+    List<SlotsEntity> generateTurfSlots (TurfEntity turfEntity) {
+        String turfId = turfEntity.getId();
+        int slotDuration = turfEntity.getSlotDuration();
+        int startHour = turfEntity.getStartHour();
+        int endHour = turfEntity.getEndHour();
+
+        List<TimeSlot> timeSlots = generateTimeSlots(
+                LocalTime.of(startHour, 0), LocalTime.of(endHour, 59), slotDuration
+        );
+
+        List<SlotsEntity> slots = new ArrayList<>();
+        for (TimeSlot timeslot : timeSlots) {
+            SlotsEntity slot = SlotsEntity.builder()
+                    .turfId(turfId)
+                    .slotDuration(slotDuration)
+                    .slotStatus(SlotStatus.VACANT)
+                    .build();
+            slots.add(slot);
+        }
+
+        return slots;
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
@@ -106,28 +134,20 @@ public class TurfController {
     }
 
     @GetMapping("/getSlots")
-    public ResponseEntity getTurfSlots (@RequestParam String id) {
+    public ResponseEntity getTurfSlots(@RequestParam String id, @RequestParam LocalDate date) {
         Optional<TurfEntity> turf = turfService.getTurf(id);
         if (turf.isPresent()) {
             TurfEntity turfEntity = turf.get();
-            // get the slots duration
-            int slotDuration = turfEntity.getSlotDuration();
-            int startHour = turfEntity.getStartHour();
-            int endHour = turfEntity.getEndHour();
 
-            // Generate slots for the day
-            List<TimeSlot> timeSlots = generateTimeSlots(
-                    LocalTime.of(startHour, 0), LocalTime.of(endHour, 59), slotDuration
-            );
+            List<SlotsEntity> availableSlots = slotsService.getAllSlotsOfTurf(id, date);
 
-            // Fetch existing bookings for the venue on the selected date
-            List<BookingSessionEntity> bookings = turfService.getBookedSlots(id);
+            if(availableSlots.isEmpty()) {
+                generateTurfSlots(turfEntity);
+            }
 
-            // Mark booked slots
-            markBookedSlots(timeSlots, bookings);
+            // return the slots for the users to choose to book them
 
-            // Return the slots
-            return new ResponseEntity<>(timeSlots, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

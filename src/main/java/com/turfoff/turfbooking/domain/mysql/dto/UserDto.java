@@ -1,5 +1,6 @@
 package com.turfoff.turfbooking.domain.mysql.dto;
 
+import com.turfoff.turfbooking.utilities.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,5 @@ public class UserDto {
     private int points;
     private String refUsed;
     private String refferalCode;
+    private Roles role;
 }

@@ -1,5 +1,6 @@
 package com.turfoff.turfbooking.domain.mysql.entities;
 
+import com.turfoff.turfbooking.utilities.Roles;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -22,9 +23,9 @@ public class UserEntity extends EntityBase {
     @Column(nullable = false)
     private String password;
 
-    private String fname;
+    private String firstName;
 
-    private String lname;
+    private String lastName;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -37,4 +38,6 @@ public class UserEntity extends EntityBase {
     private String refUsed;
 
     private String referralCode;
+
+    private Roles role;
 }

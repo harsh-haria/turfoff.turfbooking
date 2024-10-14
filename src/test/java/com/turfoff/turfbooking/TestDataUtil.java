@@ -37,11 +37,11 @@ public class TestDataUtil {
         admin.setId(adminId);
 
         return TurfEntity.builder()
-                .id(1L)
+                .id("1")
                 .name("Test Turf")
                 .status(TurfStatus.ACTIVE)
-                .owner(admin)
-                .manager(admin)
+//                .owner(admin)
+//                .manager(admin)
                 .rent(1500)
                 .amenities("AM1, AM2, AM3")
                 .phone("12345 67890")
@@ -54,11 +54,11 @@ public class TestDataUtil {
         return UserEntity.builder()
                 .username("test")
                 .password("test")
-                .fname("Ellaire")
-                .lname("Dawson")
+                .firstName("Ellaire")
+                .lastName("Dawson")
                 .email("test@gmail.com")
                 .phone("1234512345")
-                .refferalCode("ABCDEF")
+                .referralCode("ABCDEF")
                 .build();
     }
 

@@ -1,7 +1,6 @@
 package com.turfoff.turfbooking.controllers;
 
 import com.turfoff.turfbooking.domain.mongo.dto.TurfDto;
-import com.turfoff.turfbooking.domain.mongo.entities.BookingSessionEntity;
 import com.turfoff.turfbooking.domain.mongo.entities.SlotsEntity;
 import com.turfoff.turfbooking.domain.mongo.entities.TimeSlot;
 import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
@@ -35,56 +34,81 @@ public class TurfController {
         this.turfMapper = turfMapper;
     }
 
-    List<TimeSlot> generateTimeSlots(LocalTime openingTime, LocalTime closingTime, int slotDuration) {
+    List<TimeSlot> generateTimingsForSlotsWithDuration(LocalTime openingTime, LocalTime closingTime, int slotDuration) {
         List<TimeSlot> timeSlots = new ArrayList<>();
-
         LocalTime slotStartTime = openingTime;
-
         while (slotStartTime.isBefore(closingTime)) {
             LocalTime slotEndTime = slotStartTime.plusMinutes(slotDuration);
-            timeSlots.add(new TimeSlot(slotStartTime, slotEndTime, false)); // false means 'not booked'
+            timeSlots.add(new TimeSlot(slotStartTime, slotEndTime));
             slotStartTime = slotEndTime;
         }
-
         return timeSlots;
     }
 
-    boolean isOverlapping(LocalTime slotStart, LocalTime slotEnd, LocalTime bookingStart, LocalTime bookingEnd) {
-        return (slotStart.isBefore(bookingEnd) && slotEnd.isAfter(bookingStart));
-    }
+//    boolean isOverlapping(LocalTime slotStart, LocalTime slotEnd, LocalTime bookingStart, LocalTime bookingEnd) {
+//        return (slotStart.isBefore(bookingEnd) && slotEnd.isAfter(bookingStart));
+//    }
 
-    void markBookedSlots(List<TimeSlot> slots, List<BookingSessionEntity> bookings) {
-        for (BookingSessionEntity booking : bookings) {
-            for (TimeSlot slot : slots) {
-                // Check if the slot overlaps with a booking
-                if (isOverlapping(slot.getStartTime(), slot.getEndTime(), booking.getStartTime(), booking.getStartTime().plusMinutes(booking.getDuration()))) {
-                    slot.setStatus(true); // Mark as booked
-                }
-            }
-        }
-    }
+//    void markBookedSlots(List<TimeSlot> slots, List<BookingSessionEntity> bookings) {
+//        for (BookingSessionEntity booking : bookings) {
+//            for (TimeSlot slot : slots) {
+//                // Check if the slot overlaps with a booking
+//                if (isOverlapping(slot.getStartTime(), slot.getEndTime(), booking.getStartTime(), booking.getStartTime().plusMinutes(booking.getDuration()))) {
+//                    slot.setStatus(true); // Mark as booked
+//                }
+//            }
+//        }
+//    }
 
-    List<SlotsEntity> generateTurfSlots (TurfEntity turfEntity) {
+    List<SlotsEntity> generateTurfSlots(TurfEntity turfEntity, LocalDate date) {
         String turfId = turfEntity.getId();
         int slotDuration = turfEntity.getSlotDuration();
         int startHour = turfEntity.getStartHour();
         int endHour = turfEntity.getEndHour();
 
-        List<TimeSlot> timeSlots = generateTimeSlots(
+        int numDayOfWeek = date.getDayOfWeek().getValue();
+
+        LocalDate startDate = date.minusDays(numDayOfWeek+1);
+        LocalDate endDate = startDate.plusDays(7);
+
+        List<TimeSlot> timeSlots = generateTimingsForSlotsWithDuration(
                 LocalTime.of(startHour, 0), LocalTime.of(endHour, 59), slotDuration
         );
 
-        List<SlotsEntity> slots = new ArrayList<>();
-        for (TimeSlot timeslot : timeSlots) {
-            SlotsEntity slot = SlotsEntity.builder()
-                    .turfId(turfId)
-                    .slotDuration(slotDuration)
-                    .slotStatus(SlotStatus.VACANT)
-                    .build();
-            slots.add(slot);
-        }
+        List<SlotsEntity> daySlots = new ArrayList<>();
+        while(startDate.isBefore(endDate)) {
+            //check if the date already exists in the database
+            Boolean slotsExistsForDate = slotsService.slotsExistsForDate(turfId, startDate);
 
-        return slots;
+            //if yes then skip
+            if(slotsExistsForDate) {
+                continue;
+            }
+
+            // else generate the slots and insert
+            List<SlotsEntity> slots = new ArrayList<>();
+            for (TimeSlot timeslot : timeSlots) {
+                SlotsEntity slot = SlotsEntity.builder()
+                        .turfId(turfId)
+//                        .startTime(timeslot.getStartTime())
+//                        .endTime(timeslot.getEndTime())
+                        .slot(new TimeSlot(timeslot.getStartTime(), timeslot.getEndTime()))
+                        .slotStatus(SlotStatus.VACANT)
+                        .build();
+                slots.add(slot);
+            }
+            // we save the slots we want so that we can return them to the user.
+            if (startDate.isEqual(date)) {
+                daySlots.addAll(slots);
+            }
+
+            // save the slots in the database.
+            slotsService.saveSlots(slots);
+
+            // increment for the loop
+            startDate = startDate.plusDays(1);
+        }
+        return daySlots;
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
@@ -134,7 +158,8 @@ public class TurfController {
     }
 
     @GetMapping("/getSlots")
-    public ResponseEntity getTurfSlots(@RequestParam String id, @RequestParam LocalDate date) {
+    public ResponseEntity getTurfSlots(@RequestParam String id, @RequestParam String dateString) throws Exception {
+        LocalDate date = LocalDate.parse(dateString);
         Optional<TurfEntity> turf = turfService.getTurf(id);
         if (turf.isPresent()) {
             TurfEntity turfEntity = turf.get();
@@ -142,12 +167,10 @@ public class TurfController {
             List<SlotsEntity> availableSlots = slotsService.getAllSlotsOfTurf(id, date);
 
             if(availableSlots.isEmpty()) {
-                generateTurfSlots(turfEntity);
+                availableSlots = generateTurfSlots(turfEntity, date);
             }
 
-            // return the slots for the users to choose to book them
-
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(availableSlots, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

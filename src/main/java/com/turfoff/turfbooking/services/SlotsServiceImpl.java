@@ -18,4 +18,14 @@ public class SlotsServiceImpl implements SlotsService {
     public List<SlotsEntity> getAllSlotsOfTurf(String turfId, LocalDate date) {
         return List.of();
     }
+
+    @Override
+    public Boolean slotsExistsForDate(String turfId, LocalDate date) {
+        return true;
+    }
+
+    @Override
+    public void saveSlots(List<SlotsEntity> slots) {
+        return;
+    }
 }

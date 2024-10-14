@@ -1,6 +1,7 @@
 package com.turfoff.turfbooking.domain.mongo.entities;
 
 import com.turfoff.turfbooking.utilities.SlotStatus;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -23,9 +24,10 @@ public class SlotsEntity {
 
     private String turfId;
 
-    private LocalDateTime dateTime;
+    private LocalDate date;
 
-    private int slotDuration;
+    @Embedded
+    private TimeSlot slot;
 
     private SlotStatus slotStatus;
 

@@ -29,18 +29,32 @@ public class TurfController {
     private TurfService turfService;
     private SlotsService slotsService;
 
-    public TurfController(TurfService turfService, TurfMapperImpl turfMapper) {
+    public TurfController(TurfService turfService, TurfMapperImpl turfMapper, SlotsService slotsService) {
         this.turfService = turfService;
         this.turfMapper = turfMapper;
+        this.slotsService = slotsService;
     }
 
-    List<TimeSlot> generateTimingsForSlotsWithDuration(LocalTime openingTime, LocalTime closingTime, int slotDuration) {
+    List<TimeSlot> generateTimingsForSlotsWithDuration(LocalTime openingTime, int slotDuration) {
+        LocalTime entryTime = openingTime;
         List<TimeSlot> timeSlots = new ArrayList<>();
         LocalTime slotStartTime = openingTime;
-        while (slotStartTime.isBefore(closingTime)) {
-            LocalTime slotEndTime = slotStartTime.plusMinutes(slotDuration);
+        LocalTime slotEndTime = slotStartTime.plusMinutes(slotDuration);
+
+        int safetyCounter = 120;
+        int slotCounter = 0;
+        while (true) {
             timeSlots.add(new TimeSlot(slotStartTime, slotEndTime));
             slotStartTime = slotEndTime;
+            slotEndTime = slotStartTime.plusMinutes(slotDuration);
+            if (slotCounter == safetyCounter) {
+                break;
+            }
+            if (slotEndTime.equals(entryTime)) {
+                timeSlots.add(new TimeSlot(slotStartTime, slotEndTime));
+                break;
+            }
+            slotCounter++;
         }
         return timeSlots;
     }
@@ -68,11 +82,11 @@ public class TurfController {
 
         int numDayOfWeek = date.getDayOfWeek().getValue();
 
-        LocalDate startDate = date.minusDays(numDayOfWeek+1);
+        LocalDate startDate = date.minusDays(numDayOfWeek-1);
         LocalDate endDate = startDate.plusDays(7);
 
         List<TimeSlot> timeSlots = generateTimingsForSlotsWithDuration(
-                LocalTime.of(startHour, 0), LocalTime.of(endHour, 59), slotDuration
+                LocalTime.of(startHour, 0), slotDuration
         );
 
         List<SlotsEntity> daySlots = new ArrayList<>();
@@ -90,8 +104,7 @@ public class TurfController {
             for (TimeSlot timeslot : timeSlots) {
                 SlotsEntity slot = SlotsEntity.builder()
                         .turfId(turfId)
-//                        .startTime(timeslot.getStartTime())
-//                        .endTime(timeslot.getEndTime())
+                        .date(startDate)
                         .slot(new TimeSlot(timeslot.getStartTime(), timeslot.getEndTime()))
                         .slotStatus(SlotStatus.VACANT)
                         .build();

@@ -48,6 +48,11 @@ public class UserController {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
+    @GetMapping("/serveralive")
+    public ResponseEntity<String> isServerAlive() {
+        return new ResponseEntity<>("Server alive", HttpStatus.OK);
+    }
+
     @PostMapping("/new")
     public ResponseEntity<Map<String, Object>> addNewUser(@RequestBody UserDto userDto) {
         Map<String, Object> response = new HashMap<>();

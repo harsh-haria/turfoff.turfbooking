@@ -2,7 +2,6 @@ package com.turfoff.turfbooking.domain.mongo.entities;
 
 import com.turfoff.turfbooking.utilities.SlotStatus;
 import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +14,6 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Builder
 @Document(collection = "Slots")
 public class SlotsEntity {

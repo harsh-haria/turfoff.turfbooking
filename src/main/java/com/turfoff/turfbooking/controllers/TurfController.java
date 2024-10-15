@@ -157,21 +157,28 @@ public class TurfController {
         return new ResponseEntity<>(turfList, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/getSlots")
-    public ResponseEntity getTurfSlots(@RequestParam String id, @RequestParam String dateString) throws Exception {
-        LocalDate date = LocalDate.parse(dateString);
-        Optional<TurfEntity> turf = turfService.getTurf(id);
-        if (turf.isPresent()) {
-            TurfEntity turfEntity = turf.get();
+    public ResponseEntity getTurfSlots(@RequestParam String turfId, @RequestParam String dateString) throws Exception {
+        try {
+            LocalDate date = LocalDate.parse(dateString);
+            Optional<TurfEntity> turf = turfService.getTurf(turfId);
+            if (turf.isPresent()) {
+                TurfEntity turfEntity = turf.get();
 
-            List<SlotsEntity> availableSlots = slotsService.getAllSlotsOfTurf(id, date);
+                List<SlotsEntity> availableSlots = slotsService.getAllSlotsOfTurf(turfId, date);
 
-            if(availableSlots.isEmpty()) {
-                availableSlots = generateTurfSlots(turfEntity, date);
+                if (availableSlots.isEmpty()) {
+                    availableSlots = generateTurfSlots(turfEntity, date);
+                }
+
+                return new ResponseEntity<>(availableSlots, HttpStatus.OK);
             }
-
-            return new ResponseEntity<>(availableSlots, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
 }

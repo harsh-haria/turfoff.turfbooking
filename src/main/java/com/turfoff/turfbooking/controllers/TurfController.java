@@ -25,9 +25,9 @@ import java.util.*;
 @RestController
 @RequestMapping(path = "/turfs")
 public class TurfController {
-    private TurfMapperImpl turfMapper;
-    private TurfService turfService;
-    private SlotsService slotsService;
+    private final TurfMapperImpl turfMapper;
+    private final TurfService turfService;
+    private final SlotsService slotsService;
 
     public TurfController(TurfService turfService, TurfMapperImpl turfMapper, SlotsService slotsService) {
         this.turfService = turfService;
@@ -78,7 +78,6 @@ public class TurfController {
         String turfId = turfEntity.getId();
         int slotDuration = turfEntity.getSlotDuration();
         int startHour = turfEntity.getStartHour();
-        int endHour = turfEntity.getEndHour();
 
         int numDayOfWeek = date.getDayOfWeek().getValue();
 
@@ -92,10 +91,11 @@ public class TurfController {
         List<SlotsEntity> daySlots = new ArrayList<>();
         while(startDate.isBefore(endDate)) {
             //check if the date already exists in the database
-            Boolean slotsExistsForDate = slotsService.slotsExistsForDate(turfId, startDate);
+            List<SlotsEntity> slotsEntities = slotsService.getAllSlotsOfTurf(turfId, startDate);
 
-            //if yes then skip
-            if(slotsExistsForDate) {
+            //if slots exists then skip
+            if(!slotsEntities.isEmpty()) {
+                startDate = startDate.plusDays(1);
                 continue;
             }
 

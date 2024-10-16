@@ -20,14 +20,6 @@ public class SlotsServiceImpl implements SlotsService {
     }
 
     @Override
-    public Boolean slotsExistsForDate(String turfId, LocalDate date) {
-        LocalDate startOfDay = date.atStartOfDay().toLocalDate();
-        LocalDate endOfDay = date.plusDays(1).atStartOfDay().minusNanos(1).toLocalDate();
-
-        return slotsRepository.findFirstByTurfIdAndDateBetween(turfId, startOfDay, endOfDay).isPresent();
-    }
-
-    @Override
     public void saveSlots(List<SlotsEntity> slots) {
         slotsRepository.saveAll(slots);
     }

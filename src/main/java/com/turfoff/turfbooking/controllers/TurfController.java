@@ -9,6 +9,8 @@ import com.turfoff.turfbooking.services.SlotsService;
 import com.turfoff.turfbooking.services.TurfService;
 import com.turfoff.turfbooking.utilities.SlotStatus;
 import com.turfoff.turfbooking.utilities.TurfStatus;
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -191,6 +193,46 @@ public class TurfController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
+    @PostMapping("/bookSlot")
+    public ResponseEntity bookSlot(@RequestBody String slotInfoJson){
+        LinkedHashMap input;
+        JSONParser jsonParser = new JSONParser(slotInfoJson);
+        try {
+            input = jsonParser.parseObject();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        Object slotId = input.get("slotId");
+        // check if the slot is already booked or not.
+        Optional<SlotsEntity> slot = slotsService.getSlotById((String) slotId);
+
+        // if the slot is not booked then book the slot.
+        if (slot.isPresent()) {
+            SlotsEntity slotEntity = slot.get();
+            SlotStatus slotStatus = slotEntity.getSlotStatus();
+            if (slotStatus == SlotStatus.VACANT) {
+                // acquire a lock on this slot for this user.
+
+                // if lock is available then book the slot
+                slotsService.bookSlot(slotEntity.getId());
+
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else {
+                Map<String, Object> map = new HashMap<>();
+                map.put("message", "Slot got booked while you were in the process of booking. Try for another slot.");
+                return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+            }
+        }
+        else {
+            // provided slot does not exist, send error message.
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", "Could not find the slot with information provided.");
+            return new ResponseEntity<>(map, HttpStatus.EXPECTATION_FAILED); //417 because the id should have been an actual slot id.
         }
     }
 

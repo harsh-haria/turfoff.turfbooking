@@ -16,6 +16,6 @@ public interface SlotsRepository extends MongoRepository<SlotsEntity, String> {
     Optional<SlotsEntity> findById(String turfId);
 
     @Query("{ '_id': ?0 }")
-    @Update("{ '$set': { 'slotStatus': ?1 } }")
-    int updateSlotStatusById(String id, String slotStatus);
+    @Update("{ '$set': { 'slotStatus': ?1, 'bookingEntityId' : ?2 } }")
+    int updateSlotStatusAndBookingEntityIdById(String id, String slotStatus, String bookingEntityId);
 }

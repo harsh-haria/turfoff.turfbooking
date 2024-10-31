@@ -1,7 +1,5 @@
 package com.turfoff.turfbooking.domain.mongo.entities;
 
-import com.turfoff.turfbooking.domain.mysql.entities.EntityBase;
-import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,15 +13,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@Entity
 @Document(collection = "bookings")
 public class BookingsEntity {
     @Id
     private String id;
 
-    private String user;
+    private Long userId;
 
-    private String turf;
+    private String turfId;
 
     private String status;
 

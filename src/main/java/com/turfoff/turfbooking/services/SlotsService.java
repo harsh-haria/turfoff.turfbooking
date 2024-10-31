@@ -10,5 +10,5 @@ public interface SlotsService {
     List<SlotsEntity> getAllSlotsOfTurf(String turfId, LocalDate date);
     void saveSlots(List<SlotsEntity> slots);
     Optional<SlotsEntity> getSlotById(String slotId);
-    int bookSlot(String slotId);
+    int bookSlot(String slotId, String BookingEntityId);
 }

@@ -32,7 +32,7 @@ public class SlotsServiceImpl implements SlotsService {
     }
 
     @Override
-    public int bookSlot(String slotId) {
-        return slotsRepository.updateSlotStatusById(slotId, String.valueOf(SlotStatus.BOOKED));
+    public int bookSlot(String slotId, String bookingEntityId) {
+        return slotsRepository.updateSlotStatusAndBookingEntityIdById(slotId, String.valueOf(SlotStatus.BOOKED), bookingEntityId);
     }
 }

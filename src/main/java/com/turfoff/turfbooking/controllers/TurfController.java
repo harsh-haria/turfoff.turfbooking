@@ -1,16 +1,17 @@
 package com.turfoff.turfbooking.controllers;
 
+import com.turfoff.turfbooking.domain.misc.SlotBookingInputEntity;
 import com.turfoff.turfbooking.domain.mongo.dto.TurfDto;
+import com.turfoff.turfbooking.domain.mongo.entities.BookingsEntity;
 import com.turfoff.turfbooking.domain.mongo.entities.SlotsEntity;
 import com.turfoff.turfbooking.domain.mongo.entities.TimeSlot;
 import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import com.turfoff.turfbooking.mappers.impl.TurfMapperImpl;
+import com.turfoff.turfbooking.services.BookingEntityService;
 import com.turfoff.turfbooking.services.SlotsService;
 import com.turfoff.turfbooking.services.TurfService;
 import com.turfoff.turfbooking.utilities.SlotStatus;
 import com.turfoff.turfbooking.utilities.TurfStatus;
-import org.apache.tomcat.util.json.JSONParser;
-import org.apache.tomcat.util.json.ParseException;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -30,11 +31,13 @@ public class TurfController {
     private final TurfMapperImpl turfMapper;
     private final TurfService turfService;
     private final SlotsService slotsService;
+    private final BookingEntityService bookingEntityService;
 
-    public TurfController(TurfService turfService, TurfMapperImpl turfMapper, SlotsService slotsService) {
+    public TurfController(TurfService turfService, TurfMapperImpl turfMapper, SlotsService slotsService, BookingEntityService bookingEntityService) {
         this.turfService = turfService;
         this.turfMapper = turfMapper;
         this.slotsService = slotsService;
+        this.bookingEntityService = bookingEntityService;
     }
 
     List<TimeSlot> generateTimingsForSlotsWithDuration(LocalTime openingTime, int slotDuration) {
@@ -198,17 +201,13 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
     @PostMapping("/bookSlot")
-    public ResponseEntity bookSlot(@RequestBody String slotInfoJson){
-        LinkedHashMap input;
-        JSONParser jsonParser = new JSONParser(slotInfoJson);
-        try {
-            input = jsonParser.parseObject();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        Object slotId = input.get("slotId");
+    public ResponseEntity bookSlot(@RequestBody SlotBookingInputEntity slotBookingInputData){
+
+        String slotId = slotBookingInputData.getSlotId();
+        Long userId = slotBookingInputData.getUserId();
+
         // check if the slot is already booked or not.
-        Optional<SlotsEntity> slot = slotsService.getSlotById((String) slotId);
+        Optional<SlotsEntity> slot = slotsService.getSlotById(slotId);
 
         // if the slot is not booked then book the slot.
         if (slot.isPresent()) {
@@ -217,8 +216,21 @@ public class TurfController {
             if (slotStatus == SlotStatus.VACANT) {
                 // acquire a lock on this slot for this user.
 
+                LocalDateTime localDateTime = LocalDateTime.now();
+
+                //generate the booking
+                BookingsEntity bookingsEntity = BookingsEntity.builder()
+                        .userId(userId)
+                        .turfId(slot.get().getTurfId())
+                        .amount(700)
+                        .discount(0)
+                        .bookingDateTime(localDateTime)
+                        .generatedTransactionId("CASH")
+                        .build();
+                BookingsEntity savedBookingEntity = bookingEntityService.addBooking(bookingsEntity);
+
                 // if lock is available then book the slot
-                slotsService.bookSlot(slotEntity.getId());
+                slotsService.bookSlot(slotEntity.getId(), savedBookingEntity.getId());
 
                 return new ResponseEntity<>(HttpStatus.OK);
             }

@@ -103,7 +103,10 @@ public class UserController {
         String username = userDetails.getUsername();
         String authToken = jwtUtils.generateJwtTokenFromUsername(userDetails);
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
-        UserLoggedInDto userLoggedInDto = new UserLoggedInDto(username, authToken, roles);
+        Optional<UserEntity> userEntity = userService.getUserByUsername(username);
+        UserEntity user = userEntity.get();
+        Long userId = user.getId();
+        UserLoggedInDto userLoggedInDto = new UserLoggedInDto(username, authToken, roles, userId);
         return new ResponseEntity<>(userLoggedInDto, HttpStatus.OK);
     }
 

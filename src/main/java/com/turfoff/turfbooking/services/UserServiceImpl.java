@@ -41,4 +41,9 @@ public class UserServiceImpl implements UserService{
     public void updatePhone(String username, String newPhone) {
         userRepository.updatePhone(username, newPhone);
     }
+
+    @Override
+    public Optional<UserEntity> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

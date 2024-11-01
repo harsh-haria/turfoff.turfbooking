@@ -8,6 +8,7 @@ import com.turfoff.turfbooking.domain.mongo.entities.TimeSlot;
 import com.turfoff.turfbooking.domain.mongo.entities.TurfEntity;
 import com.turfoff.turfbooking.mappers.impl.TurfMapperImpl;
 import com.turfoff.turfbooking.services.BookingEntityService;
+import com.turfoff.turfbooking.services.PreBookingService;
 import com.turfoff.turfbooking.services.SlotsService;
 import com.turfoff.turfbooking.services.TurfService;
 import com.turfoff.turfbooking.utilities.SlotStatus;
@@ -32,12 +33,14 @@ public class TurfController {
     private final TurfService turfService;
     private final SlotsService slotsService;
     private final BookingEntityService bookingEntityService;
+    private final PreBookingService preBookingService;
 
-    public TurfController(TurfService turfService, TurfMapperImpl turfMapper, SlotsService slotsService, BookingEntityService bookingEntityService) {
+    public TurfController(TurfService turfService, TurfMapperImpl turfMapper, SlotsService slotsService, BookingEntityService bookingEntityService, PreBookingService preBookingService) {
         this.turfService = turfService;
         this.turfMapper = turfMapper;
         this.slotsService = slotsService;
         this.bookingEntityService = bookingEntityService;
+        this.preBookingService = preBookingService;
     }
 
     List<TimeSlot> generateTimingsForSlotsWithDuration(LocalTime openingTime, int slotDuration) {
@@ -201,7 +204,7 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
     @PostMapping("/bookSlot")
-    public ResponseEntity bookSlot(@RequestBody SlotBookingInputEntity slotBookingInputData){
+    public ResponseEntity bookSlot(@RequestBody SlotBookingInputEntity slotBookingInputData) {
 
         String slotId = slotBookingInputData.getSlotId();
         Long userId = slotBookingInputData.getUserId();
@@ -211,34 +214,41 @@ public class TurfController {
 
         // if the slot is not booked then book the slot.
         if (slot.isPresent()) {
-            SlotsEntity slotEntity = slot.get();
-            SlotStatus slotStatus = slotEntity.getSlotStatus();
-            if (slotStatus == SlotStatus.VACANT) {
-                // acquire a lock on this slot for this user.
+            // try to save the slot in the pre-booking table
+            // if we get an error while inserting saying duplicate entry then we can throw error
+            // if the entry is inserted then the slot is available and can be booked.
 
-                LocalDateTime localDateTime = LocalDateTime.now();
-
-                //generate the booking
-                BookingsEntity bookingsEntity = BookingsEntity.builder()
-                        .userId(userId)
-                        .turfId(slot.get().getTurfId())
-                        .amount(700)
-                        .discount(0)
-                        .bookingDateTime(localDateTime)
-                        .generatedTransactionId("CASH")
-                        .build();
-                BookingsEntity savedBookingEntity = bookingEntityService.addBooking(bookingsEntity);
-
-                // if lock is available then book the slot
-                slotsService.bookSlot(slotEntity.getId(), savedBookingEntity.getId());
-
-                return new ResponseEntity<>(HttpStatus.OK);
+            try {
+                preBookingService.insertPreBooking(slotId, userId);
             }
-            else {
+            catch (Exception e) {
+                System.out.println(e);
                 Map<String, Object> map = new HashMap<>();
-                map.put("message", "Slot got booked while you were in the process of booking. Try for another slot.");
+                map.put("message", "Unexpected Error. The slot got booked by some other user. Try Again with some other slot.");
                 return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
             }
+
+            LocalDateTime localDateTime = LocalDateTime.now();
+
+            //generate the booking
+            BookingsEntity bookingsEntity = BookingsEntity.builder()
+                    .userId(userId)
+                    .turfId(slot.get().getTurfId())
+                    .amount(700)
+                    .discount(0)
+                    .bookingDateTime(localDateTime)
+                    .generatedTransactionId("CASH")
+                    .build();
+            BookingsEntity savedBookingEntity = bookingEntityService.addBooking(bookingsEntity);
+
+            // if entry was possible then book the slot
+            slotsService.bookSlot(slotId, savedBookingEntity.getId());
+
+//            // delete the slot since the booking is complete and no new duplicate record will be required. [yet to be tested]
+//            preBookingService.deletePreBooking(slotId, userId);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+
         }
         else {
             // provided slot does not exist, send error message.

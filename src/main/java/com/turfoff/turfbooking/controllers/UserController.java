@@ -1,12 +1,15 @@
 package com.turfoff.turfbooking.controllers;
 
+import com.turfoff.turfbooking.domain.mongo.entities.SlotsEntity;
 import com.turfoff.turfbooking.domain.mysql.dto.UserDto;
 import com.turfoff.turfbooking.domain.mysql.dto.UserLoggedInDto;
 import com.turfoff.turfbooking.domain.mysql.dto.UserLoginDto;
 import com.turfoff.turfbooking.domain.mysql.entities.UserEntity;
 import com.turfoff.turfbooking.jwt.JwtUtils;
 import com.turfoff.turfbooking.mappers.impl.UserMapperImpl;
+import com.turfoff.turfbooking.repositories.mongo.SlotsRepository;
 import com.turfoff.turfbooking.services.UserService;
+import com.turfoff.turfbooking.utilities.Events;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,11 +25,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -40,6 +41,8 @@ public class UserController {
     private BCryptPasswordEncoder passwordEncoder;
     private UserService userService;
     private UserMapperImpl userMapper;
+    @Autowired
+    private SlotsRepository slotsRepository;
 
     public UserController(UserMapperImpl userMapper, UserService userService, JwtUtils jwtUtils) {
         this.userMapper = userMapper;
@@ -133,5 +136,14 @@ public class UserController {
         String receivedPhone = userDto.getPhone();
         userService.updatePhone(username, receivedPhone);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'SUPER_ADMIN', 'ROLE_USER')")
+    @GetMapping("/getUserSlots")
+    public List<SlotsEntity> getUserBookedSlots(@RequestParam Long userId, @RequestParam(required = false) Events booking) {
+//        LocalDate date = LocalDate.now();
+
+        List<SlotsEntity> bookedSlotsByUserId = slotsRepository.findBookedSlotsByUserId(userId);
+        return bookedSlotsByUserId;
     }
 }

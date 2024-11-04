@@ -21,25 +21,6 @@ public class CustomSlotRepositoryImpl implements CustomSlotRepository {
     @Override
     public List<SlotsEntity> findBookedSlotsByUserId(Long userId) {
         // Define the aggregation pipeline stages
-//        Aggregation aggregation = Aggregation.newAggregation(
-//                match(where("slotStatus").is("BOOKED")),
-//                match(where("slot.endTime").lt(LocalDateTime.now())), // Filter slots with endTime before now
-////                addFields().addFieldWithValue("bookingEntityIdObj", ConvertOperators.ToObjectId.toObjectId("$bookingEntityId")), // Convert bookingEntityId to ObjectId
-//                lookup("bookings", "bookingEntityIdObj", "_id", "bookingDetails"), // Join with bookings
-//                unwind("bookingDetails"), // Flatten bookingDetails array
-//                match(where("bookingDetails.userId").is(userId)) // Filter for the specified userId
-//        );
-
-//        Aggregation aggregation = Aggregation.newAggregation(
-//                match(where("slotStatus").is("BOOKED")),
-//                match(where("slot.endTime").lt(LocalDateTime.now())), // Filter slots with endTime before now
-//                addFields().addFieldWithValue("bookingEntityIdObj",
-//                        AggregationExpressions.convertValue("bookingEntityId").to("objectId") // Convert bookingEntityId to ObjectId
-//                ).build(),
-//                lookup("bookings", "bookingEntityIdObj", "_id", "bookingDetails"), // Join with bookings
-//                unwind("bookingDetails"), // Flatten bookingDetails array
-//                match(where("bookingDetails.userId").is(userId)) // Filter for the specified userId
-//        );
 
         Aggregation aggregation = Aggregation.newAggregation(
                 // Match stage to filter documents with slotStatus as "BOOKED"

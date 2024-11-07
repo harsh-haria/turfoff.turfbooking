@@ -1,0 +1,14 @@
+- [x] User and Admin authentication with JWT
+- [x] Turf management system
+- [x] Slot-based booking system
+- [x] Double booking prevention
+- [x] Geospatial search for nearby turfs
+- [x] Multi-database architecture (MySQL + MongoDB)
+- [x] Pre-booking functionality
+- [ ] Change status of turf
+- [ ] Secure Payment Integration
+- [ ] Multi slot booking
+- [ ] Reports for admin
+- [ ] Reports download for admin
+- [ ] User slot rescheduling
+- [ ] User slot booking confirmation

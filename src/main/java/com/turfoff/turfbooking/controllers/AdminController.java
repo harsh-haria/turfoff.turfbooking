@@ -6,6 +6,7 @@ import com.turfoff.turfbooking.domain.mysql.entities.AdminEntity;
 import com.turfoff.turfbooking.jwt.JwtUtils;
 import com.turfoff.turfbooking.mappers.impl.AdminMapperImpl;
 import com.turfoff.turfbooking.services.AdminService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/admin")
+@Hidden
 public class AdminController {
 
     private AdminService adminService;

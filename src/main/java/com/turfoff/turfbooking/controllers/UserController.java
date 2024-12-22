@@ -10,6 +10,7 @@ import com.turfoff.turfbooking.mappers.impl.UserMapperImpl;
 import com.turfoff.turfbooking.repositories.mongo.SlotsRepository;
 import com.turfoff.turfbooking.services.UserService;
 import com.turfoff.turfbooking.utilities.Events;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/users")
+@Tag(name = "User APIs", description = "Sign-up, Sign-in, Read & Edit User details along with fetching user slots")
 public class UserController {
 
     @Autowired

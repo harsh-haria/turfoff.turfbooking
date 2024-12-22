@@ -13,6 +13,7 @@ import com.turfoff.turfbooking.services.SlotsService;
 import com.turfoff.turfbooking.services.TurfService;
 import com.turfoff.turfbooking.utilities.SlotStatus;
 import com.turfoff.turfbooking.utilities.TurfStatus;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -28,6 +29,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(path = "/turfs")
+@Tag(name = "Turf APIs")
 public class TurfController {
     private final TurfMapperImpl turfMapper;
     private final TurfService turfService;

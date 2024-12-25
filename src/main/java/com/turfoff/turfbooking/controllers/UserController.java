@@ -10,6 +10,7 @@ import com.turfoff.turfbooking.mappers.impl.UserMapperImpl;
 import com.turfoff.turfbooking.repositories.mongo.SlotsRepository;
 import com.turfoff.turfbooking.services.UserService;
 import com.turfoff.turfbooking.utilities.Events;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +55,21 @@ public class UserController {
     }
 
     @GetMapping("/serveralive")
+    @Operation(
+            summary = "Server Health check",
+            description = "Can be used to check if the server is alive or not"
+//            ,tags = { "Health Check" }
+    )
     public ResponseEntity<String> isServerAlive() {
         return new ResponseEntity<>("Server alive", HttpStatus.OK);
     }
 
     @PostMapping("/new")
+    @Operation(
+            summary = "Add user",
+            description = "User can be an Admin or even a normal user who can book slots."
+//            ,tags = { "Health Check" }
+    )
     public ResponseEntity<Map<String, Object>> addNewUser(@RequestBody UserDto userDto) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -84,6 +95,11 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{userId}")
+    @Operation(
+            summary = "Get User",
+            description = "This API can be used to get the basic details of the user."
+//            ,tags = { "Health Check" }
+    )
     public ResponseEntity<UserDto> getUser(@PathVariable long userId) {
         Optional<UserEntity> userById = userService.getUserById(userId);
         return userById.map(userEntity -> {
@@ -93,6 +109,11 @@ public class UserController {
     }
 
     @PostMapping("/signin")
+    @Operation(
+            summary = "Sign In",
+            description = "User Sign-in API. User needs to register first before using this API. Returns a JWT Token."
+//            ,tags = { "Health Check" }
+    )
     public ResponseEntity userSignIn(@RequestBody UserLoginDto userLoginDto) {
         Authentication authentication;
         try {
@@ -117,6 +138,11 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_USER')")
     @PatchMapping("/updatePassword/{username}")
+    @Operation(
+            summary = "Change Password",
+            description = "This API can be used to change the user password for their account."
+//            ,tags = { "Health Check" }
+    )
     public ResponseEntity changeUserPassword(@PathVariable String username, @RequestBody UserDto userDto) {
         String receivedPassword = userDto.getPassword();
         String newPassword = passwordEncoder.encode(receivedPassword);
@@ -126,6 +152,11 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_USER')")
     @PatchMapping("/updateEmail/{username}")
+    @Operation(
+            summary = "Change Email",
+            description = "This API can be used to change the user email for their account."
+//            ,tags = { "Health Check" }
+    )
     public ResponseEntity changeUserEmail(@PathVariable String username, @RequestBody UserDto userDto) {
         String receivedEmail = userDto.getEmail();
         userService.updateEmail(username, receivedEmail);
@@ -134,6 +165,11 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_USER')")
     @PatchMapping("/updatePhone/{username}")
+    @Operation(
+            summary = "Change Phone",
+            description = "This API can be used to change the user phone number for their account."
+//            ,tags = { "Health Check" }
+    )
     public ResponseEntity changeUserPhone(@PathVariable String username, @RequestBody UserDto userDto) {
         String receivedPhone = userDto.getPhone();
         userService.updatePhone(username, receivedPhone);
@@ -142,6 +178,11 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'SUPER_ADMIN', 'ROLE_USER')")
     @GetMapping("/getUserSlots")
+    @Operation(
+            summary = "Get User slots",
+            description = "This API can be used to fetch all the slots that have been booked by the user in the past."
+//            ,tags = { "Health Check" }
+    )
     public List<SlotsEntity> getUserBookedSlots(@RequestParam Long userId, @RequestParam(required = false) Events booking) {
 //        LocalDate date = LocalDate.now();
 

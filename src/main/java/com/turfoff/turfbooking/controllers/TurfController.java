@@ -13,6 +13,7 @@ import com.turfoff.turfbooking.services.SlotsService;
 import com.turfoff.turfbooking.services.TurfService;
 import com.turfoff.turfbooking.utilities.SlotStatus;
 import com.turfoff.turfbooking.utilities.TurfStatus;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
@@ -29,7 +30,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(path = "/turfs")
-@Tag(name = "Turf APIs")
+@Tag(name = "Turf APIs", description = "APIs for turf related operations")
 public class TurfController {
     private final TurfMapperImpl turfMapper;
     private final TurfService turfService;
@@ -136,6 +137,10 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
     @PostMapping(path = "/new")
+    @Operation(
+            summary = "New Turf",
+            description = "This API can be used to create a new turf entity in the application."
+    )
     public ResponseEntity<TurfEntity> createTurf(@RequestBody final TurfDto turfDto) {
         turfDto.setStatus(TurfStatus.INACTIVE);
         turfDto.setCreatedAt(LocalDateTime.now());
@@ -146,6 +151,10 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
     @GetMapping(path = "/{id}")
+    @Operation(
+            summary = "Get Turf details",
+            description = "This API can be used to fetch the basic details of a particular turf."
+    )
     public ResponseEntity getTurfById(@PathVariable final String id) {
         Optional<TurfEntity> turfEntity = turfService.getTurf(id);
         if (turfEntity.isPresent()) {
@@ -159,6 +168,10 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN')")
     @PutMapping(path = "/{id}")
+    @Operation(
+            summary = "Update Turf",
+            description = "Update details of a particular Turf using this API."
+    )
     public ResponseEntity<TurfEntity> updateTurf(@PathVariable String id, @RequestBody final TurfDto turfDto) {
         turfDto.setId(id);
 //        turfDto.setLastModifiedAt(LocalDateTime.now());
@@ -169,6 +182,10 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(path = "/getNearByTurfs")
+    @Operation(
+            summary = "Get Near-by Turfs",
+            description = "We can get a list of turfs/events located near a specific point of location"
+    )
     public ResponseEntity getNearByTurfs(@RequestParam String latitude, @RequestParam String longitude, @RequestParam String radiusInKm) {
         double latitudeCoordinate = Double.parseDouble(latitude);
         double longitudeCoordinate = Double.parseDouble(longitude);
@@ -182,6 +199,10 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/getSlots")
+    @Operation(
+            summary = "Slots list",
+            description = "This API will fetch all the slots of a particular turf along with the status of each slot."
+    )
     public ResponseEntity getTurfSlots(@RequestParam String turfId, @RequestParam String dateString) throws Exception {
         try {
             LocalDate date = LocalDate.parse(dateString);
@@ -206,6 +227,10 @@ public class TurfController {
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER')")
     @PostMapping("/bookSlot")
+    @Operation(
+            summary = "Book slot",
+            description = "This API will book a particular slot for a user."
+    )
     public ResponseEntity bookSlot(@RequestBody SlotBookingInputEntity slotBookingInputData) {
 
         String slotId = slotBookingInputData.getSlotId();

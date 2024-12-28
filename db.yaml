@@ -9,6 +9,8 @@ services:
       - 3306:3306
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - mynetw
 
   mongodb:
     image: mongo:latest
@@ -20,8 +22,28 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data:/var/lib/mongo
+    networks:
+      - mynetw
 
+  web-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+      - mongodb
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetw
 
 volumes:
   mysql_data:
   mongodb_data:
+
+networks:
+  mynetw:
+    driver: bridge

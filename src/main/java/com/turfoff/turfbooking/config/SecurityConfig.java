@@ -60,10 +60,12 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorizeRequests) ->
             authorizeRequests
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                     .requestMatchers("/users/new").permitAll()
                     .requestMatchers("/users/signin").permitAll()
                     .requestMatchers("/users/serveralive").permitAll()
                     .anyRequest().authenticated()
+//                authorizeRequests.anyRequest().permitAll()
         );
 //        http.getSharedObject(AuthenticationManagerBuilder.class).authenticationProvider(authProviderForUser());
         http.authenticationProvider(authProviderForUser());

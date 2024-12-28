@@ -10,8 +10,8 @@
     </parent>
     <groupId>com.turfoff.turfbooking</groupId>
     <artifactId>turfbooking</artifactId>
-    <version>0.0.1</version>
-    <name>turfbooking</name>
+    <version>1.0.0</version>
+    <name>Turf Booking</name>
     <description>Turf booking website backend</description>
     <properties>
         <java.version>21</java.version>

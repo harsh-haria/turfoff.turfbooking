@@ -25,11 +25,11 @@ services:
     networks:
       - mynetw
 
-  turfoff-api:
+  turfoff:
     build:
       context: .
       dockerfile: Dockerfile
-    image: harsh1234566/turfoff-api
+    image: harsh1234566/turfoff
     depends_on:
       - mysql
       - mongodb
